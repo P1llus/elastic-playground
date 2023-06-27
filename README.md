@@ -9,5 +9,5 @@ The current state of this app is that it is not ready for public consumption jus
 Everything runs inside docker containers (Custom ES build and the webservice), to try it out, follow these steps:
 
 1. Clone the repository
-2. Rename `.env.example` to `.env`
+2. Rename `.env.example` to `.env`, no need to modify any values at this stage, as it requires the local ES running in docker to function properly.
 3. Start with `docker-compose up`
