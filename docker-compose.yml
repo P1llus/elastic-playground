@@ -1,0 +1,29 @@
+version: "3.4"
+services:
+  es_simulate_stats:
+    image: p1llus/es_simulate_stats:v1
+    ports:
+      - 9200:9200
+    container_name: es_node_1
+    healthcheck:
+      test: "curl http://127.0.0.1:9200/_cat/health | cut -f4 -d' ' | grep -E '(green|yellow)'"
+      start_period: 300s
+      interval: 5s
+  es_playground:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.web
+    container_name: es_playground
+    stdin_open: true
+    depends_on:
+      - es_simulate_stats
+    # Ports are also defined in vite.config.js, remember to change that as well.
+    ports:
+      - 8000:8000
+    working_dir: /srv/app
+    command: >
+      sh -c "yarn install && yarn dev"
+    volumes:
+      - type: bind
+        source: ./
+        target: /srv/app

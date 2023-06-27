@@ -1,0 +1,11 @@
+FROM ubuntu:latest
+COPY ./elasticsearch-8.9.0-SNAPSHOT-linux-x86_64.tar.gz /etc/
+RUN mkdir /etc/elasticsearch && tar -zxvf /etc/elasticsearch-8.9.0-SNAPSHOT-linux-x86_64.tar.gz -C /etc/elasticsearch && mkdir /var/lib/elasticsearch && mkdir /var/log/elasticsearch && rm /etc/elasticsearch-8.9.0-SNAPSHOT-linux-x86_64.tar.gz
+WORKDIR /etc/elasticsearch/elasticsearch-8.9.0-SNAPSHOT
+EXPOSE 9200/tcp
+COPY ./elasticsearch.yml /etc/elasticsearch/elasticsearch-8.9.0-SNAPSHOT/config/elasticsearch.yml
+RUN groupadd -g 1000 elasticsearch && \
+    useradd -u 1000 -g elasticsearch -s /bin/sh elasticsearch
+RUN chown elasticsearch:elasticsearch -hR /etc/elasticsearch/elasticsearch-8.9.0-SNAPSHOT/ && chown elasticsearch:elasticsearch -hR /var/lib/elasticsearch && chown elasticsearch:elasticsearch -hR /var/log/elasticsearch
+USER elasticsearch
+CMD [ "/etc/elasticsearch/elasticsearch-8.9.0-SNAPSHOT/bin/elasticsearch"]
