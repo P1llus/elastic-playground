@@ -16,7 +16,6 @@ const makeId = htmlIdGenerator();
 
 const MainPage = () => {
   const [runResults, setRunResults] = useState([]);
-  const [tokenCount, setTokenCount] = useState(0);
   const [currentError, setCurrentError] = useState([]);
   const [response, setResponse] = useState();
   const [hasProcessors, setHasProcessors] = useState(false);
@@ -28,26 +27,6 @@ const MainPage = () => {
   );
   const [ingestPipelineStatsTotal, setIngestPipelineStatsTotal] = useState({});
   const [logSamples, setLogSamples] = useState([""]);
-  const [formState, setFormState] = useState({
-    vendor: "",
-    product: "",
-    description: "",
-  });
-
-  const runGPT = (pipeline) => {
-    setIngestPipelineState([]);
-    pipeline.processors.forEach((item) => {
-      const key = makeId();
-      const newProcessor = Object.keys(item)[0];
-      const content = JSON.stringify(item, null, 2);
-      const newItem = {
-        key,
-        newProcessor,
-        content,
-      };
-      setIngestPipelineState((prevList) => [...prevList, newItem]);
-    });
-  };
 
   useEffect(() => {
     const getStats = setTimeout(() => {
@@ -92,7 +71,6 @@ const MainPage = () => {
 
       runResults.docs.forEach((doc) => {
         let lastSuccessfulResult = null; // Initialize the last successful result as null for each doc
-
         doc.processor_results.forEach((result, index) => {
           if (result.status === "success") {
             lastSuccessfulResult = result.doc._source; // Update the last successful result for each success
@@ -177,30 +155,11 @@ const MainPage = () => {
     return () => clearTimeout(getData);
   }, [ingestPipelineState, logSamples]);
 
-  useEffect(() => {
-    if (logSamples.length === 0) {
-      return;
-    }
-    const getTokenCount = setTimeout(() => {
-      let tokenCount = calculateTokenCount(logSamples);
-      setTokenCount(tokenCount);
-    }, 500);
-
-    return () => clearTimeout(getTokenCount);
-  }, [logSamples]);
-
   return (
     <div>
       <EuiFlexGroup>
         <EuiFlexItem>
-          <LogSampleForm
-            formState={formState}
-            setFormState={setFormState}
-            logSamples={logSamples}
-            setLogSamples={setLogSamples}
-            runGPT={runGPT}
-            tokenCount={tokenCount}
-          />
+          <LogSampleForm />
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiSpacer />

@@ -22,7 +22,6 @@ import { useState, useEffect, useRef } from "react";
 import { Editor } from "@monaco-editor/react";
 import { processors } from "../processor/Processor";
 import { appendIconComponentCache } from "@elastic/eui/es/components/icon/icon";
-
 import { icon as EuiIconArrowDown } from "@elastic/eui/es/components/icon/assets/arrow_down";
 import { icon as EuiEmpty } from "@elastic/eui/es/components/icon/assets/empty";
 import { icon as EuiCross } from "@elastic/eui/es/components/icon/assets/cross";
@@ -30,6 +29,7 @@ import { icon as EuiError } from "@elastic/eui/es/components/icon/assets/error";
 import { icon as EuiClock } from "@elastic/eui/es/components/icon/assets/clock";
 import { icon as EuiCheckIn } from "@elastic/eui/es/components/icon/assets/checkInCircleFilled";
 import { icon as EuiCopyClipboard } from "@elastic/eui/es/components/icon/assets/copy_clipboard";
+import { useGlobalState } from "../hooks/globalState";
 
 appendIconComponentCache({
   arrowDown: EuiIconArrowDown,
@@ -43,32 +43,19 @@ appendIconComponentCache({
 
 const makeId = htmlIdGenerator();
 
-const IngestPipeline = ({
-  ingestPipelineState,
-  setIngestPipelineState,
-  ingestPipelineStats,
-  ingestPipelineStatsTotal,
-  ingestPipelineSkippedSteps,
-  ingestPipelineSteps,
-  currentError,
-}) => {
+const IngestPipeline = ({}) => {
+  const pipelineState = useGlobalState((state) => state.pipelineState);
+  const addPipelineItem = useGlobalState((state) => state.addPipelineItem);
+  const updatePipelineItem = useGlobalState(
+    (state) => state.updatePipelineItem
+  );
   const [copyPipeline, setCopyPipeline] = useState({});
   const [isBadgePopoverOpen, setIsBadgePopoverOpen] = useState([]);
   const buttonRef = useRef();
   const [isTextCopied, setTextCopied] = useState(false);
 
   const handlePipelineEditorChange = (key, newContent, newProcessor) => {
-    setIngestPipelineState((prevList) => {
-      const currentList = [...prevList];
-      const index = currentList.findIndex((item) => item.key === key);
-      currentList[index] = {
-        ...currentList[index],
-        content: newContent,
-        newProcessor: newProcessor,
-      };
-
-      return currentList;
-    });
+    updatePipelineItem(key, newContent, newProcessor);
   };
 
   useEffect(() => {
@@ -155,7 +142,7 @@ ${JSON.stringify(test, null, 2)}`;
       duration,
       percentage,
     };
-    setIngestPipelineState((prevList) => [...prevList, newItem]);
+    addPipelineItem(newItem);
   };
   return (
     <EuiFlexItem grow={1}>

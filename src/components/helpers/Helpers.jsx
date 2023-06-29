@@ -2,7 +2,6 @@ import { htmlIdGenerator } from "@elastic/eui";
 import ECS_FIELDS from "./Ecs";
 import axios from "axios";
 import { getEncoding, encodingForModel } from "js-tiktoken";
-
 const username = import.meta.env.VITE_ES_USER;
 const password = import.meta.env.VITE_ES_PASS;
 
@@ -24,7 +23,7 @@ export const calculateTokenCount = (textArray) => {
   return tokens.length;
 };
 
-export const runPipeline = (ingestPipeline, messageArray, setResponse) => {
+export const runPipeline = (ingestPipeline, messageArray) => {
   if (ingestPipeline.length > 0) {
     url = host + "/_ingest/pipeline/_simulate?verbose=true";
   } else {
@@ -74,7 +73,7 @@ export const runPipeline = (ingestPipeline, messageArray, setResponse) => {
       },
     })
     .then((response) => {
-      setResponse(response.data);
+      return response.data;
     })
     .catch((error) => {
       console.log("response err: ", error);
