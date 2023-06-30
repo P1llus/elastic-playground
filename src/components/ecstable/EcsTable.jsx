@@ -13,15 +13,20 @@ import { appendIconComponentCache } from "@elastic/eui/es/components/icon/icon";
 
 import { icon as EuiReturnKey } from "@elastic/eui/es/components/icon/assets/return_key";
 import { icon as EuiDocumentation } from "@elastic/eui/es/components/icon/assets/documentation";
+import { useGlobalState } from "../hooks/GlobalState";
 
 appendIconComponentCache({
   return_key: EuiReturnKey,
   documentation: EuiDocumentation,
 });
 
-const EcsTable = ({ runResults }) => {
+const EcsTable = () => {
+  const pipelineRunResults = useGlobalState(
+    (state) => state.pipelineRunResults
+  );
   const [popoverState, setPopoverState] = useState("");
   const [ecsFields, setEcsFields] = useState([]);
+
   const handleEcsFields = (response) => {
     let fieldsSet = new Set();
     let newFieldsArray = [];
@@ -56,13 +61,13 @@ const EcsTable = ({ runResults }) => {
 
   useEffect(() => {
     if (
-      typeof runResults !== "undefined" &&
-      runResults &&
-      runResults.length > 0
+      typeof pipelineRunResults !== "undefined" &&
+      pipelineRunResults &&
+      pipelineRunResults.length > 0
     ) {
-      handleEcsFields(runResults);
+      handleEcsFields(pipelineRunResults);
     }
-  }, [runResults]);
+  }, [pipelineRunResults]);
 
   const closePopover = (id) => {
     setPopoverState((prevState) => ({ ...prevState, [id]: false }));

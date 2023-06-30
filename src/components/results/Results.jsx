@@ -1,15 +1,18 @@
 import { EuiCodeBlock, EuiFlexItem, EuiSpacer, EuiPanel } from "@elastic/eui";
-
 import { appendIconComponentCache } from "@elastic/eui/es/components/icon/icon";
-
 import { icon as EuiCopyClipboard } from "@elastic/eui/es/components/icon/assets/copy_clipboard";
+import { useGlobalState } from "../hooks/GlobalState";
 
 appendIconComponentCache({
   copyClipboard: EuiCopyClipboard,
 });
 
-const Results = ({ runResults, ingestPipelineStatsTotal }) => {
-  if (!runResults || runResults.length === 0) {
+const Results = () => {
+  const pipelineRunResults = useGlobalState(
+    (state) => state.pipelineRunResults
+  );
+  const errorDocIndices = useGlobalState((state) => state.errorDocIndices);
+  if (!pipelineRunResults || pipelineRunResults.length === 0) {
     return (
       <EuiFlexItem grow={1}>
         <EuiPanel>
@@ -22,13 +25,11 @@ const Results = ({ runResults, ingestPipelineStatsTotal }) => {
   return (
     <EuiFlexItem grow={1}>
       <div style={{ maxWidth: 5000 }}>
-        {runResults.map((result, index) => (
+        {pipelineRunResults.map((result, index) => (
           <EuiFlexItem key={index}>
             <EuiPanel>
               <h2>
-                {ingestPipelineStatsTotal &&
-                ingestPipelineStatsTotal.errorDocIndex &&
-                ingestPipelineStatsTotal.errorDocIndex.includes(index)
+                {errorDocIndices?.includes(index)
                   ? `Document: ${index + 1} - State before Error`
                   : `Output Results - Document: ${index + 1}`}
               </h2>

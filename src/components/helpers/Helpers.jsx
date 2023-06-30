@@ -2,11 +2,14 @@ import { htmlIdGenerator } from "@elastic/eui";
 import ECS_FIELDS from "./Ecs";
 import axios from "axios";
 import { getEncoding, encodingForModel } from "js-tiktoken";
+import { useGlobalState } from "../hooks/GlobalState";
+
 const username = import.meta.env.VITE_ES_USER;
 const password = import.meta.env.VITE_ES_PASS;
 
 const host = import.meta.env.VITE_ES_HOST;
 let url = "";
+let verbose = false;
 
 const makeId = htmlIdGenerator();
 
@@ -25,6 +28,9 @@ export const calculateTokenCount = (textArray) => {
 
 export const runPipeline = (ingestPipeline, messageArray) => {
   if (ingestPipeline.length > 0) {
+    verbose = true;
+  }
+  if (verbose) {
     url = host + "/_ingest/pipeline/_simulate?verbose=true";
   } else {
     url = host + "/_ingest/pipeline/_simulate";
@@ -73,11 +79,82 @@ export const runPipeline = (ingestPipeline, messageArray) => {
       },
     })
     .then((response) => {
-      return response.data;
+      handleRunResults(response.data, verbose);
     })
     .catch((error) => {
       console.log("response err: ", error);
     });
+};
+
+export const handleRunResults = (runResults, verbose) => {
+  const globalState = useGlobalState.getState();
+
+  if (!verbose) {
+    const lastSuccessfulResults = runResults.docs.map((doc) => doc.doc._source);
+    globalState.setPipelineRunResults(lastSuccessfulResults);
+  } else if (verbose && runResults.docs.length > 0) {
+    let lastSuccessfulResults = [];
+    let errorDocIndices = [];
+    let pipelineSteps = {};
+    let pipelineSkippedSteps = {};
+    let pipelineErrors = {};
+    let pipelineStats = {};
+    let successCount = 0;
+    let errorCount = 0;
+    let totalDuration = 0;
+
+    runResults.docs.forEach((doc) => {
+      let lastSuccessfulResult = null;
+
+      doc.processor_results.forEach((result, index) => {
+        const { status, tag, doc: resultDoc } = result;
+
+        if (status === "success") {
+          lastSuccessfulResult = resultDoc._source;
+          if (!pipelineSteps[tag]) pipelineSteps[tag] = [];
+          pipelineSteps[tag].push(resultDoc._source);
+
+          successCount++;
+          totalDuration += resultDoc._ingest.duration;
+        } else if (status === "skipped") {
+          if (!pipelineSkippedSteps[tag]) pipelineSkippedSteps[tag] = [];
+          const skippedResult = { ...result };
+          if (doc.processor_results[index - 1]) {
+            skippedResult.skipped_doc =
+              doc.processor_results[index - 1].doc._source;
+          }
+          pipelineSkippedSteps[tag].push(skippedResult);
+        } else {
+          if (!pipelineErrors[tag]) pipelineErrors[tag] = [];
+          pipelineErrors[tag].push(result);
+          errorDocIndices.push(index);
+
+          errorCount++;
+        }
+
+        const stats = {
+          status: result.status,
+          duration:
+            result.status === "success" ? resultDoc._ingest.duration : 0,
+        };
+
+        if (!pipelineStats[tag]) pipelineStats[tag] = [];
+        pipelineStats[tag].push(stats);
+      });
+
+      lastSuccessfulResults.push(lastSuccessfulResult);
+    });
+
+    globalState.setPipelineSteps(pipelineSteps);
+    globalState.setPipelineSkippedSteps(pipelineSkippedSteps);
+    globalState.setPipelineErrors(pipelineErrors);
+    globalState.setPipelineStats(pipelineStats);
+    globalState.setPipelineStatsTotalSuccessCount(successCount);
+    globalState.setPipelineStatsTotalErrorCount(errorCount);
+    globalState.setPipelineStatsTotalDuration(totalDuration);
+    globalState.setPipelineStatsTotalErrorDocIndices(errorDocIndices);
+    globalState.setPipelineRunResults(lastSuccessfulResults);
+  }
 };
 
 export const extractFields = (obj, parent) => {

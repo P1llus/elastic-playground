@@ -1,15 +1,7 @@
 import { euiDragDropReorder } from "@elastic/eui";
 export const pipelineErrors = (set) => ({
   errors: {},
-  addPipelineError: (tag, error) =>
-    set((state) => {
-      let newState = { ...state.errors };
-      if (!newState[tag]) {
-        newState[tag] = [];
-      }
-      newState[tag].push(error);
-      return { errors: newState };
-    }),
+  setPipelineErrors: (newErrors) => set({ errors: newErrors }),
 });
 
 export const pipelineState = (set) => ({
@@ -27,7 +19,7 @@ export const pipelineState = (set) => ({
       };
       return { ingestPipeline: currentList };
     }),
-  reorderIngestPipelineItems: (sourceIndex, destinationIndex) =>
+  reorderPipelineItems: (sourceIndex, destinationIndex) =>
     set((state) => {
       const reorderedList = euiDragDropReorder(
         state.ingestPipeline,
@@ -36,60 +28,43 @@ export const pipelineState = (set) => ({
       );
       return { ingestPipeline: reorderedList };
     }),
+  removePipelineItem: (index) =>
+    set((state) => {
+      const currentList = [...state.ingestPipeline];
+      currentList.splice(index, 1);
+      return { ingestPipeline: currentList };
+    }),
 });
 
 export const pipelineRunResults = (set) => ({
-  lastSuccessfulResult: null,
-  setLastSuccessfulResult: (result) => set({ lastSuccessfulResult: result }),
+  pipelineRunResults: null,
+  setPipelineRunResults: (results) => set({ pipelineRunResults: results }),
 });
 
 export const pipelineStats = (set) => ({
   pipelineStats: {},
-  addPipelineStats: (tag, stats) =>
-    set((state) => {
-      let newState = { ...state.pipelineStats };
-      if (!newState[tag]) {
-        newState[tag] = [];
-      }
-      newState[tag].push(stats);
-      return { pipelineStats: newState };
-    }),
+  setPipelineStats: (newStats) => set({ pipelineStats: newStats }),
 });
 
 export const pipelineSteps = (set) => ({
-  ingestPipelineSteps: {},
-  addPipelineStep: (tag, source) =>
-    set((state) => {
-      let newState = { ...state.ingestPipelineSteps };
-      if (!newState[tag]) {
-        newState[tag] = [];
-      }
-      newState[tag].push(source);
-      return { ingestPipelineSteps: newState };
-    }),
+  pipelineSteps: {},
+  setPipelineSteps: (newSteps) => set({ pipelineSteps: newSteps }),
 });
 
 export const pipelineSkippedSteps = (set) => ({
-  ingestPipelineSkippedSteps: {},
-  addPipelineSkippedStep: (tag, skippedStep) =>
-    set((state) => {
-      let newState = { ...state.ingestPipelineSkippedSteps };
-      if (!newState[tag]) {
-        newState[tag] = [];
-      }
-      newState[tag].push(skippedStep);
-      return { ingestPipelineSkippedSteps: newState };
-    }),
+  pipelineSkippedSteps: {},
+  setPipelineSkippedSteps: (newSkippedSteps) =>
+    set({ pipelineSkippedSteps: newSkippedSteps }),
 });
 
 export const pipelineStatsTotal = (set) => ({
   totalDuration: 0,
   successCount: 0,
   errorCount: 0,
-  addPipelineStatsTotalSuccessCount: () =>
-    set((state) => ({ successCount: state.successCount + 1 })),
-  addPipelineStatsTotalErrorCount: () =>
-    set((state) => ({ errorCount: state.errorCount + 1 })),
-  addPipelineStatsTotalTotalDuration: (value) =>
-    set((state) => ({ totalDuration: state.totalDuration + value })),
+  errorDocIndices: [],
+  setPipelineStatsTotalSuccessCount: (value) => set({ successCount: value }),
+  setPipelineStatsTotalErrorCount: (value) => set({ errorCount: value }),
+  setPipelineStatsTotalDuration: (value) => set({ totalDuration: value }),
+  setPipelineStatsTotalErrorDocIndices: (indices) =>
+    set({ errorDocIndices: indices }),
 });

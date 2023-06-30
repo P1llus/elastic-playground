@@ -4,7 +4,7 @@ import {
   EuiFieldText,
   EuiFormRow,
 } from "@elastic/eui";
-import { useGlobalState } from "../hooks/globalState";
+import { useGlobalState } from "../hooks/GlobalState";
 
 const Forms = () => {
   const vendor = useGlobalState((state) => state.vendor);

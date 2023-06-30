@@ -6,7 +6,7 @@ import {
   EuiButtonIcon,
   EuiSpacer,
 } from "@elastic/eui";
-import { useGlobalState } from "../hooks/globalState";
+import { useGlobalState } from "../hooks/GlobalState";
 import { calculateTokenCount } from "../helpers/Helpers";
 import { useEffect } from "react";
 
