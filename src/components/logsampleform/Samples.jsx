@@ -39,7 +39,9 @@ const Samples = () => {
         <EuiFlexItem key={index}>
           <EuiFormRow
             fullWidth
-            label={`Log Sample ${index + 1} - JSON Only for now`}
+            label={`Log Sample ${
+              index + 1
+            } - JSON Only when using ChatGPT for now`}
           >
             <EuiFieldText
               fullWidth
