@@ -5,122 +5,36 @@ import {
   EuiButton,
   EuiButtonIcon,
   EuiSpacer,
+  htmlIdGenerator,
 } from "@elastic/eui";
 import { useGlobalState } from "../hooks/GlobalState";
-import { calculateTokenCount } from "../helpers/Helpers";
+import { calculateTokenCount, openAIRequest } from "../helpers/Helpers";
 import { useEffect } from "react";
 
-const gptResponse = {
-  description: "MySQL Audit Logs Pipeline",
-  processors: [
-    {
-      json: {
-        field: "message",
-        target_field: "mysql",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.timestamp",
-        target_field: "@timestamp",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.id",
-        target_field: "event.id",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.class",
-        target_field: "event.kind",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.event",
-        target_field: "event.action",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.account.user",
-        target_field: "user.name",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.account.host",
-        target_field: "client.address",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.login.user",
-        target_field: "mysql.login.username",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.login.ip",
-        target_field: "client.ip",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.general_data.command",
-        target_field: "mysql.general.data.command",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.general_data.sql_command",
-        target_field: "mysql.general.data.sql_command",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.general_data.query",
-        target_field: "mysql.general.data.query",
-      },
-    },
-    {
-      rename: {
-        field: "mysql.general_data.status",
-        target_field: "event.outcome",
-      },
-    },
-  ],
-};
-
-/**const runGPT = (pipeline) => {
-    setIngestPipelineState([]);
-    pipeline.processors.forEach((item) => {
-      const key = makeId();
-      const newProcessor = Object.keys(item)[0];
-      const content = JSON.stringify(item, null, 2);
-      const newItem = {
-        key,
-        newProcessor,
-        content,
-      };
-      setIngestPipelineState((prevList) => [...prevList, newItem]);
-    });
-  };
-**/
+const makeId = htmlIdGenerator();
 
 const Buttons = () => {
   const increaseSample = useGlobalState((state) => state.increaseSample);
   const decreaseSample = useGlobalState((state) => state.decreaseSample);
   const samples = useGlobalState((state) => state.samples);
+  const vendor = useGlobalState((state) => state.vendor);
+  const product = useGlobalState((state) => state.product);
   const tokenCount = useGlobalState((state) => state.tokenCount);
   const setTokenCount = useGlobalState((state) => state.setTokenCount);
+  const setIngestPipelineState = useGlobalState(
+    (state) => state.setIngestPipelineState
+  );
   const handleRemoveLogSample = () => {
     decreaseSample();
   };
   const handleAddLogSample = () => {
     increaseSample();
+  };
+
+  const runGPT = () => {
+    (async () => {
+      await openAIRequest(vendor, product, samples);
+    })();
   };
 
   useEffect(() => {
@@ -144,7 +58,12 @@ const Buttons = () => {
           justifyContent="flexEnd"
         >
           <EuiFlexItem>
-            <EuiButton fill={true} onClick={() => {}}>
+            <EuiButton
+              fill={true}
+              onClick={() => {
+                runGPT();
+              }}
+            >
               Analyze with ChatGPT
             </EuiButton>
           </EuiFlexItem>

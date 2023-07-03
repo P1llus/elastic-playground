@@ -6,6 +6,7 @@ export const pipelineErrors = (set) => ({
 
 export const pipelineState = (set) => ({
   ingestPipeline: [],
+  setIngestPipelineState: (items) => set(() => ({ ingestPipeline: items })),
   addPipelineItem: (newItem) =>
     set((state) => ({ ingestPipeline: [...state.ingestPipeline, newItem] })),
   updatePipelineItem: (key, newContent, newProcessor) =>

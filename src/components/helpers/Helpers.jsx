@@ -1,21 +1,47 @@
 import { htmlIdGenerator } from "@elastic/eui";
 import ECS_FIELDS from "./Ecs";
 import axios from "axios";
-import { getEncoding, encodingForModel } from "js-tiktoken";
+import { getEncoding } from "js-tiktoken";
 import { useGlobalState } from "../hooks/GlobalState";
+import { OpenAIClient, AzureKeyCredential } from "@azure/openai";
 
-const username = import.meta.env.VITE_ES_USER;
-const password = import.meta.env.VITE_ES_PASS;
+const esUser = import.meta.env.VITE_ES_USER;
+const esPass = import.meta.env.VITE_ES_PASS;
+const esHost = import.meta.env.VITE_ES_HOST;
 
-const host = import.meta.env.VITE_ES_HOST;
-let url = "";
-let verbose = false;
+const aiEndpoint = import.meta.env.VITE_OPENAI_ENDPOINT;
+const aiKey = import.meta.env.VITE_OPENAI_APIKEY;
+const aiEngine = import.meta.env.VITE_OPENAI_ENGINE;
+
+const globalState = useGlobalState.getState();
+
+const examplePipeline = `{"processors":[{"json":{"field":"message","target_field":"mysqlenterprise.audit"}},{"remove":{"field":["message"]}},{"set":{"field":"event.kind","value":"event"}},{"append":{"field":"event.category","value":"database"}},{"append":{"field":"event.category","value":"network","if":"ctx?.mysqlenterprise?.audit?.event == 'connect'"}},{"append":{"field":"event.category","value":"iam","if":"['create_user', 'delete_user', 'drop_user', 'grant', 'flush_privileges'].contains(ctx.mysqlenterprise.audit?.general_data?.sql_command)"}},{"append":{"field":"event.type","value":"access","if":"ctx?.mysqlenterprise?.audit?.class != 'audit'"}},{"set":{"field":"event.outcome","value":"success","if":"ctx?.mysqlenterprise?.audit?.connection_data?.status != null && ctx?.mysqlenterprise?.audit?.connection_data?.status == 0 || ctx?.mysqlenterprise?.audit?.general_data?.status != null && ctx?.mysqlenterprise?.audit?.general_data?.status == 0"}},{"set":{"field":"event.outcome","value":"failure","if":"ctx?.mysqlenterprise?.audit?.connection_data?.status != null && ctx?.mysqlenterprise?.audit?.connection_data?.status > 0 || ctx?.mysqlenterprise?.audit?.general_data?.status != null && ctx?.mysqlenterprise?.audit?.general_data?.status > 0"}},{"set":{"field":"event.action","value":"mysql-{{ mysqlenterprise.audit.event }}","if":"ctx?.mysqlenterprise?.audit?.event != null"}},{"rename":{"field":"mysqlenterprise.audit.account.user","target_field":"server.user.name","ignore_missing":true}},{"rename":{"field":"mysqlenterprise.audit.account.host","target_field":"client.domain","ignore_missing":true}},{"rename":{"field":"mysqlenterprise.audit.login.os","target_field":"client.user.name","ignore_missing":true}},{"rename":{"field":"mysqlenterprise.audit.login.ip","target_field":"client.ip","ignore_missing":true}},{"rename":{"field":"mysqlenterprise.audit.startup_data.os_version","target_field":"host.os.full","ignore_missing":true}},{"rename":{"field":"mysqlenterprise.audit.startup_data.mysql_version","target_field":"service.version","ignore_missing":true}},{"rename":{"field":"mysqlenterprise.audit.startup_data.server_id","target_field":"service.id","ignore_missing":true}},{"rename":{"field":"mysqlenterprise.audit.startup_data.args","target_field":"process.args","ignore_missing":true}},{"set":{"field":"user.name","value":"{{server.user.name}}","ignore_empty_value":true,"if":"ctx.user?.target != null"}},{"append":{"field":"related.user","value":"{{server.user.name}}","allow_duplicates":false,"if":"ctx?.server?.user?.name != null"}},{"append":{"field":"related.user","value":"{{client.user.name}}","allow_duplicates":false,"if":"ctx?.client?.user?.name != null"}},{"append":{"field":"related.user","value":"{{user.target.name}}","allow_duplicates":false,"if":"ctx?.user?.target?.name != null"}},{"append":{"field":"related.ip","value":"{{client.ip}}","allow_duplicates":false,"if":"ctx?.client?.ip != null"}},{"append":{"field":"related.hosts","value":"{{client.domain}}","allow_duplicates":false,"if":"ctx?.client?.domain != null"}},{"date":{"field":"mysqlenterprise.audit.timestamp","formats":["yyyy-MM-dd HH:mm:ss"],"if":"ctx?.mysqlenterprise?.audit?.timestamp != null"}}]}`;
+
+const messages = [
+  {
+    role: "system",
+    content:
+      'You are an AI assistant that helps people create Elasticsearch Ingest Pipelines based on user provided data which is a JSON string that is stored in the "message" field. Please provide a single codeblock on a single line containing a Ingest Pipeline and nothing else. The content from the user should include the vendor and product, and one or more JSON strings for example data to be transformed with the ingest pipeline.\nWhen creating the Ingest Pipeline, follow these rules:\nFirst use the JSON processor to process the JSON string in the message field. The configured target_field for the JSON processor should be the vendor and product, for example mysql.audit or microsoft.defender.\nAfter that you should use the remove processor to remove the message field.\nAfter that you should use the rename processor, on any field that matches the Elastic Common Schema, to rename the field and path to match the ECS schema. For example mysql.audit.username should be moved to user.name. Only use one rename processor per field, as it does not allow arrays.\nNever try to rename two fields to the same ECS field if they are in the same log sample, as it will overwrite eachother. If the user provides multiple log samples, and each has different fields that would result in the same ECS destination field then that is fine.\nIf you find any field that indicates the timestamp the event happened, use a date processor to parse this field into @timestamp.',
+  },
+  {
+    role: "user",
+    content:
+      'Vendor: MySQL Enterprise, Product: Audit\nTest Data: { "timestamp": "2020-10-19 19:31:47", "id": 0, "class": "general", "event": "status", "connection_id": 16, "account": { "user": "audit_test_user2", "host": "hades.home" }, "login": { "user": "audit_test_user2", "os": "", "ip": "192.168.2.5", "proxy": "" }, "general_data": { "command": "Query", "sql_command": "create_table", "query": "CREATE TABLE audit_test_table (firstname VARCHAR(20), lastname VARCHAR(20))", "status": 0 } }',
+  },
+  {
+    role: "assistant",
+    content: "```" + examplePipeline + "```",
+  },
+];
 
 const makeId = htmlIdGenerator();
 
 export const calculateTokenCount = (textArray) => {
-  let fullText =
-    'When responding to the question, please only respond with the Ingest Pipeline without any text or descriptions. When using Elasticsearch Ingest Pipelines to ingest the below log sample, which is a JSON string stored in the "message" field, try to expand the "json" field into a new field called "mysql", rename any fields that belongs into the Elastic Common Schema (ECS), and leave the rest of the fields under the mysql parent field name. Remember that rename processors is not needed when field and target field is the same, and set processors are not used to set the value of the same fieldname';
+  let fullText = "";
+
+  messages.forEach((message) => {
+    fullText += message.content + "\n";
+  });
 
   textArray.forEach((text) => {
     fullText += "\n" + text;
@@ -27,13 +53,15 @@ export const calculateTokenCount = (textArray) => {
 };
 
 export const runPipeline = (ingestPipeline, messageArray) => {
+  let verbose = false;
+  let url = "";
   if (ingestPipeline.length > 0) {
     verbose = true;
   }
   if (verbose) {
-    url = host + "/_ingest/pipeline/_simulate?verbose=true";
+    url = esHost + "/_ingest/pipeline/_simulate?verbose=true";
   } else {
-    url = host + "/_ingest/pipeline/_simulate";
+    url = esHost + "/_ingest/pipeline/_simulate";
   }
   const result = {
     pipeline: {
@@ -75,7 +103,7 @@ export const runPipeline = (ingestPipeline, messageArray) => {
     .post(url, result, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Basic " + btoa(username + ":" + password),
+        Authorization: "Basic " + btoa(esUser + ":" + esPass),
       },
     })
     .then((response) => {
@@ -87,8 +115,6 @@ export const runPipeline = (ingestPipeline, messageArray) => {
 };
 
 export const handleRunResults = (runResults, verbose) => {
-  const globalState = useGlobalState.getState();
-
   if (!verbose) {
     const lastSuccessfulResults = runResults.docs.map((doc) => doc.doc._source);
     globalState.setPipelineRunResults(lastSuccessfulResults);
@@ -179,3 +205,51 @@ export const extractFields = (obj, parent) => {
 
   return result;
 };
+
+export const openAIRequest = async (vendor, product, textArray) => {
+  if (!vendor || !product || textArray.length === 0) return;
+
+  const client = new OpenAIClient(aiEndpoint, new AzureKeyCredential(aiKey));
+
+  let fullText = `Vendor: ${vendor}, Product: ${product}\n`;
+  textArray.forEach((text, index) => {
+    fullText += `Test Data ${index + 1}: ${text}\n`;
+  });
+  const allMessages = [
+    ...messages,
+    {
+      role: "user",
+      content: fullText,
+    },
+  ];
+  const result = await client.getChatCompletions(aiEngine, allMessages, {
+    maxTokens: 10000,
+  });
+
+  const pipeline = extractPipeline(result?.choices[0]?.message?.content);
+  let processedPipeline = null;
+  try {
+    processedPipeline = JSON.parse(pipeline);
+  } catch (e) {
+    console.log(e);
+    return;
+  }
+  let items = [];
+  processedPipeline.processors.forEach((item) => {
+    const key = makeId();
+    const newProcessor = Object.keys(item)[0];
+    const content = JSON.stringify(item, null, 2);
+    const newItem = {
+      key,
+      newProcessor,
+      content,
+    };
+    items.push(newItem);
+  });
+  globalState.setIngestPipelineState(items);
+};
+
+function extractPipeline(str) {
+  const matches = str.match(/```([^`]*)```/);
+  return matches && matches[1] ? matches[1] : null;
+}
