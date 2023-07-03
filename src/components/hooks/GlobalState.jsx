@@ -1,10 +1,5 @@
-import { create } from "zustand";
-import {
-  formState,
-  logSamplesState,
-  tokenState,
-  gptState,
-} from "./InputFormState";
+import { create } from 'zustand';
+import { formState, logSamplesState, tokenState, gptState } from './InputFormState';
 import {
   pipelineErrors,
   pipelineState,
@@ -13,7 +8,7 @@ import {
   pipelineSteps,
   pipelineSkippedSteps,
   pipelineStatsTotal,
-} from "./IngestPipelineState";
+} from './IngestPipelineState';
 
 export const useGlobalState = create((...a) => ({
   ...formState(...a),

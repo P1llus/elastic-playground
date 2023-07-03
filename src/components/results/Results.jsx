@@ -1,16 +1,14 @@
-import { EuiCodeBlock, EuiFlexItem, EuiSpacer, EuiPanel } from "@elastic/eui";
-import { appendIconComponentCache } from "@elastic/eui/es/components/icon/icon";
-import { icon as EuiCopyClipboard } from "@elastic/eui/es/components/icon/assets/copy_clipboard";
-import { useGlobalState } from "../hooks/GlobalState";
+import { EuiCodeBlock, EuiFlexItem, EuiSpacer, EuiPanel } from '@elastic/eui';
+import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon';
+import { icon as EuiCopyClipboard } from '@elastic/eui/es/components/icon/assets/copy_clipboard';
+import { useGlobalState } from '../hooks/GlobalState';
 
 appendIconComponentCache({
   copyClipboard: EuiCopyClipboard,
 });
 
 const Results = () => {
-  const pipelineRunResults = useGlobalState(
-    (state) => state.pipelineRunResults
-  );
+  const pipelineRunResults = useGlobalState((state) => state.pipelineRunResults);
   const errorDocIndices = useGlobalState((state) => state.errorDocIndices);
   if (!pipelineRunResults || pipelineRunResults.length === 0) {
     return (

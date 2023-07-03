@@ -1,7 +1,7 @@
 export const formState = (set) => ({
-  vendor: "",
-  product: "",
-  description: "",
+  vendor: '',
+  product: '',
+  description: '',
   setFormState: (key, value) => set({ [key]: value }),
 });
 export const tokenState = (set) => ({
@@ -15,8 +15,8 @@ export const gptState = (set) => ({
 });
 
 export const logSamplesState = (set) => ({
-  samples: [""],
-  increaseSample: () => set((state) => ({ samples: [...state.samples, ""] })),
+  samples: [''],
+  increaseSample: () => set((state) => ({ samples: [...state.samples, ''] })),
   decreaseSample: () =>
     set((state) => {
       if (state.samples.length > 1) {

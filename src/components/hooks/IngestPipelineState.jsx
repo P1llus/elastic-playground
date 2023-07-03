@@ -1,4 +1,4 @@
-import { euiDragDropReorder } from "@elastic/eui";
+import { euiDragDropReorder } from '@elastic/eui';
 export const pipelineErrors = (set) => ({
   errors: {},
   setPipelineErrors: (newErrors) => set({ errors: newErrors }),
@@ -7,8 +7,7 @@ export const pipelineErrors = (set) => ({
 export const pipelineState = (set) => ({
   ingestPipeline: [],
   setIngestPipelineState: (items) => set(() => ({ ingestPipeline: items })),
-  addPipelineItem: (newItem) =>
-    set((state) => ({ ingestPipeline: [...state.ingestPipeline, newItem] })),
+  addPipelineItem: (newItem) => set((state) => ({ ingestPipeline: [...state.ingestPipeline, newItem] })),
   updatePipelineItem: (key, newContent, newProcessor) =>
     set((state) => {
       const currentList = [...state.ingestPipeline];
@@ -22,11 +21,7 @@ export const pipelineState = (set) => ({
     }),
   reorderPipelineItems: (sourceIndex, destinationIndex) =>
     set((state) => {
-      const reorderedList = euiDragDropReorder(
-        state.ingestPipeline,
-        sourceIndex,
-        destinationIndex
-      );
+      const reorderedList = euiDragDropReorder(state.ingestPipeline, sourceIndex, destinationIndex);
       return { ingestPipeline: reorderedList };
     }),
   removePipelineItem: (index) =>
@@ -54,8 +49,7 @@ export const pipelineSteps = (set) => ({
 
 export const pipelineSkippedSteps = (set) => ({
   pipelineSkippedSteps: {},
-  setPipelineSkippedSteps: (newSkippedSteps) =>
-    set({ pipelineSkippedSteps: newSkippedSteps }),
+  setPipelineSkippedSteps: (newSkippedSteps) => set({ pipelineSkippedSteps: newSkippedSteps }),
 });
 
 export const pipelineStatsTotal = (set) => ({
@@ -66,6 +60,5 @@ export const pipelineStatsTotal = (set) => ({
   setPipelineStatsTotalSuccessCount: (value) => set({ successCount: value }),
   setPipelineStatsTotalErrorCount: (value) => set({ errorCount: value }),
   setPipelineStatsTotalDuration: (value) => set({ totalDuration: value }),
-  setPipelineStatsTotalErrorDocIndices: (indices) =>
-    set({ errorDocIndices: indices }),
+  setPipelineStatsTotalErrorDocIndices: (indices) => set({ errorDocIndices: indices }),
 });

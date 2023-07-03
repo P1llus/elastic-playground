@@ -1,12 +1,7 @@
-import {
-  EuiHeader,
-  EuiHeaderLinks,
-  EuiHeaderLink,
-  EuiHeaderSectionItem,
-} from "@elastic/eui";
-import { appendIconComponentCache } from "@elastic/eui/es/components/icon/icon";
+import { EuiHeader, EuiHeaderLinks, EuiHeaderLink, EuiHeaderSectionItem } from '@elastic/eui';
+import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon';
 
-import { icon as EuiHeaderLogo } from "@elastic/eui/es/components/icon/assets/logo_elastic";
+import { icon as EuiHeaderLogo } from '@elastic/eui/es/components/icon/assets/logo_elastic';
 
 appendIconComponentCache({
   elasticLogo: EuiHeaderLogo,

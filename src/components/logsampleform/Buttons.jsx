@@ -1,14 +1,7 @@
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPanel,
-  EuiButton,
-  EuiButtonIcon,
-  EuiSpacer,
-} from "@elastic/eui";
-import { useGlobalState } from "../hooks/GlobalState";
-import { calculateTokenCount, openAIRequest } from "../helpers/Helpers";
-import { useEffect } from "react";
+import { EuiFlexGroup, EuiFlexItem, EuiPanel, EuiButton, EuiButtonIcon, EuiSpacer } from '@elastic/eui';
+import { useGlobalState } from '../hooks/GlobalState';
+import { calculateTokenCount, openAIRequest } from '../helpers/Helpers';
+import { useEffect } from 'react';
 
 const Buttons = () => {
   const increaseSample = useGlobalState((state) => state.increaseSample);
@@ -19,7 +12,6 @@ const Buttons = () => {
   const vendor = useGlobalState((state) => state.vendor);
   const product = useGlobalState((state) => state.product);
   const tokenCount = useGlobalState((state) => state.tokenCount);
-  const setTokenCount = useGlobalState((state) => state.setTokenCount);
   const handleRemoveLogSample = () => {
     decreaseSample();
   };
@@ -36,7 +28,8 @@ const Buttons = () => {
   };
 
   useEffect(() => {
-    if (samples.length === 0) {
+    const setTokenCount = useGlobalState.getState().setTokenCount;
+    if (samples?.length === 0) {
       return;
     }
     const getTokenCount = setTimeout(() => {
@@ -50,11 +43,7 @@ const Buttons = () => {
   return (
     <EuiPanel>
       <EuiFlexGroup direction="column" gutterSize="s">
-        <EuiFlexGroup
-          direction="column"
-          alignItems="flexEnd"
-          justifyContent="flexEnd"
-        >
+        <EuiFlexGroup direction="column" alignItems="flexEnd" justifyContent="flexEnd">
           <EuiFlexItem>
             <EuiButton
               fill={true}
@@ -66,9 +55,7 @@ const Buttons = () => {
               Analyze with ChatGPT
             </EuiButton>
           </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            Current Token Count: {tokenCount}
-          </EuiFlexItem>
+          <EuiFlexItem grow={false}>Current Token Count: {tokenCount}</EuiFlexItem>
           <EuiFlexItem grow={false}>Price per 1k Token: $0.002</EuiFlexItem>
           <EuiFlexGroup alignItems="flexEnd" justifyContent="flexEnd">
             <EuiFlexItem grow={false}>

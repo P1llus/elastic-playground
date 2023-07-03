@@ -1,11 +1,6 @@
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiComboBox,
-  htmlIdGenerator,
-} from "@elastic/eui";
-import { processors } from "../processor/Processor";
-import { useGlobalState } from "../hooks/GlobalState";
+import { EuiFlexGroup, EuiFlexItem, EuiComboBox, htmlIdGenerator } from '@elastic/eui';
+import { processors } from '../processor/Processor';
+import { useGlobalState } from '../hooks/GlobalState';
 
 const makeId = htmlIdGenerator();
 
@@ -15,9 +10,9 @@ const ComboBox = () => {
     const newProcessor = selectedOptions[0].label;
     const content = selectedOptions[0].content;
     const key = makeId();
-    const status = "unknown";
-    const error = "";
-    const duration = "";
+    const status = 'unknown';
+    const error = '';
+    const duration = '';
     const percentage = 0;
     const newItem = {
       key,

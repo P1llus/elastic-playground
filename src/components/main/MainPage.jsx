@@ -1,10 +1,9 @@
-import { EuiFlexItem, EuiFlexGroup, EuiSpacer } from "@elastic/eui";
-import { useState, useEffect } from "react";
+import { EuiFlexItem, EuiFlexGroup, EuiSpacer } from '@elastic/eui';
 
-import LogSampleForm from "../logsampleform/LogSampleForm";
-import EcsTable from "../ecstable/EcsTable";
-import IngestPipeline from "../ingestpipeline/IngestPipeline";
-import Results from "../results/Results";
+import LogSampleForm from '../logsampleform/LogSampleForm';
+import EcsTable from '../ecstable/EcsTable';
+import IngestPipeline from '../ingestpipeline/IngestPipeline';
+import Results from '../results/Results';
 
 const MainPage = () => {
   return (

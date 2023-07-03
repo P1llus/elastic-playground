@@ -1,23 +1,23 @@
-import { EuiPopover, EuiBadge, EuiCodeBlock, EuiSpacer } from "@elastic/eui";
-import { useGlobalState } from "../hooks/GlobalState";
-import { useState } from "react";
+import { EuiPopover, EuiBadge, EuiCodeBlock, EuiSpacer } from '@elastic/eui';
+import { useGlobalState } from '../hooks/GlobalState';
+import { useState } from 'react';
 
 const badgeTypes = {
   duration: {
-    color: "primary",
-    onClickAriaLabel: "Duration",
-    dataKey: "pipelineStats",
+    color: 'primary',
+    onClickAriaLabel: 'Duration',
+    dataKey: 'pipelineStats',
   },
-  error: { color: "danger", onClickAriaLabel: "Error", dataKey: "errors" },
+  error: { color: 'danger', onClickAriaLabel: 'Error', dataKey: 'errors' },
   skipped: {
-    color: "primary",
-    onClickAriaLabel: "Skipped",
-    dataKey: "pipelineSkippedSteps",
+    color: 'primary',
+    onClickAriaLabel: 'Skipped',
+    dataKey: 'pipelineSkippedSteps',
   },
   success: {
-    color: "success",
-    onClickAriaLabel: "Success",
-    dataKey: "pipelineSteps",
+    color: 'success',
+    onClickAriaLabel: 'Success',
+    dataKey: 'pipelineSteps',
   },
 };
 
@@ -39,7 +39,7 @@ const ProcessorBadge = ({ type, tag, idx }) => {
       [identifier]: false,
     }));
   };
-  if (type === "duration") {
+  if (type === 'duration') {
     return (
       <EuiPopover
         key={id}
@@ -51,14 +51,14 @@ const ProcessorBadge = ({ type, tag, idx }) => {
             }}
             color={color}
           >
-            {"Stats"}
+            {'Stats'}
           </EuiBadge>
         }
         isOpen={isBadgePopoverOpen[id]}
         closePopover={() => closeBadgePopover(id)}
       >
         {data?.map((doc, index) => (
-          <div key={"entry-" + id}>
+          <div key={'entry-' + id}>
             <p>{`Document: ${index + 1} - Duration: ${doc?.duration} (ns)`}</p>
             <EuiSpacer size="s" />
           </div>
@@ -84,7 +84,7 @@ const ProcessorBadge = ({ type, tag, idx }) => {
         closePopover={() => closeBadgePopover(id)}
       >
         <EuiCodeBlock language="json" isCopyable>
-          {JSON.stringify(data, null, 2) ?? ""}
+          {JSON.stringify(data, null, 2) ?? ''}
         </EuiCodeBlock>
       </EuiPopover>
     );

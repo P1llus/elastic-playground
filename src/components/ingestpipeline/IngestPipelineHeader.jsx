@@ -1,5 +1,5 @@
-import { EuiFlexGroup, EuiFlexItem, EuiText, EuiBadge } from "@elastic/eui";
-import { useGlobalState } from "../hooks/GlobalState";
+import { EuiFlexGroup, EuiFlexItem, EuiText, EuiBadge } from '@elastic/eui';
+import { useGlobalState } from '../hooks/GlobalState';
 
 const IngestPipelineHeader = () => {
   const totalDuration = useGlobalState((state) => state.totalDuration);

@@ -1,62 +1,62 @@
 export const processors = [
   {
-    key: "append",
+    key: 'append',
     content: {
       append: {
-        field: "tags",
-        value: ["production"],
+        field: 'tags',
+        value: ['production'],
       },
     },
   },
   {
-    key: "convert",
+    key: 'convert',
     content: {
       convert: {
-        field: "source.ip",
-        type: "ip",
+        field: 'source.ip',
+        type: 'ip',
       },
     },
   },
   {
-    key: "csv",
+    key: 'csv',
     content: {
       csv: {
-        field: "message",
-        target_fields: ["field1", "field2"],
+        field: 'message',
+        target_fields: ['field1', 'field2'],
       },
     },
   },
   {
-    key: "date",
+    key: 'date',
     content: {
       date: {
-        field: "message",
-        target_field: ["timestamp"],
-        formats: ["dd/MM/yyyy"],
-        timezone: "Europe/Amsterdam",
+        field: 'message',
+        target_field: ['timestamp'],
+        formats: ['dd/MM/yyyy'],
+        timezone: 'Europe/Amsterdam',
       },
     },
   },
   {
-    key: "dissect",
+    key: 'dissect',
     content: {
       dissect: {
-        field: "message",
+        field: 'message',
         pattern:
           '%{clientip} %{ident} %{auth} [%{@timestamp}] "%{verb} %{request} HTTP/%{httpversion}" %{status} %{size}',
       },
     },
   },
   {
-    key: "dot_expander",
+    key: 'dot_expander',
     content: {
       dot_expander: {
-        field: "foo.bar",
+        field: 'foo.bar',
       },
     },
   },
   {
-    key: "drop",
+    key: 'drop',
     content: {
       drop: {
         if: "ctx.network_name == 'Guest'",
@@ -64,239 +64,237 @@ export const processors = [
     },
   },
   {
-    key: "enrich",
+    key: 'enrich',
     content: {
       enrich: {
-        field: "message",
-        target_field: "destinationfield",
+        field: 'message',
+        target_field: 'destinationfield',
       },
     },
   },
   {
-    key: "fail",
+    key: 'fail',
     content: {
       fail: {
         if: "ctx.tags.contains('production') != true",
-        message: "The production tag is not present, found tags: {{{tags}}}",
+        message: 'The production tag is not present, found tags: {{{tags}}}',
       },
     },
   },
   {
-    key: "fingerprint",
+    key: 'fingerprint',
     content: {
       fingerprint: {
-        fields: ["field1", "field2"],
-        target_field: "fingerprintfield",
+        fields: ['field1', 'field2'],
+        target_field: 'fingerprintfield',
       },
     },
   },
   {
-    key: "foreach",
+    key: 'foreach',
     content: {
       foreach: {
-        field: "field1",
+        field: 'field1',
         if: "ctx.tags.contains('production') != true",
         processor: {
           uppercase: {
-            field: "_ingest._value",
+            field: '_ingest._value',
           },
         },
       },
     },
   },
   {
-    key: "geoip",
+    key: 'geoip',
     content: {
       geoip: {
-        field: "client.ip",
-        target_field: "client.geo",
+        field: 'client.ip',
+        target_field: 'client.geo',
       },
     },
   },
   {
-    key: "grok",
+    key: 'grok',
     content: {
       grok: {
-        field: "client.ip",
-        patterns: [
-          "%{IP:client} %{WORD:method} %{URIPATHPARAM:request} %{NUMBER:bytes:int} %{NUMBER:duration:double}",
-        ],
+        field: 'client.ip',
+        patterns: ['%{IP:client} %{WORD:method} %{URIPATHPARAM:request} %{NUMBER:bytes:int} %{NUMBER:duration:double}'],
       },
     },
   },
   {
-    key: "gsub",
+    key: 'gsub',
     content: {
       gsub: {
-        field: "client.ip",
-        pattern: "\\.",
-        replacement: "-",
+        field: 'client.ip',
+        pattern: '\\.',
+        replacement: '-',
       },
     },
   },
   {
-    key: "join",
+    key: 'join',
     content: {
       join: {
-        field: "joined_array_field",
-        separator: "-",
+        field: 'joined_array_field',
+        separator: '-',
       },
     },
   },
   {
-    key: "json",
+    key: 'json',
     content: {
       json: {
-        field: "message",
-        target_field: "json",
+        field: 'message',
+        target_field: 'json',
       },
     },
   },
   {
-    key: "kv",
+    key: 'kv',
     content: {
       kv: {
-        field: "message",
-        field_split: " ",
-        value_split: "=",
+        field: 'message',
+        field_split: ' ',
+        value_split: '=',
       },
     },
   },
   {
-    key: "lowercase",
+    key: 'lowercase',
     content: {
       lowercase: {
-        field: "message",
+        field: 'message',
       },
     },
   },
   {
-    key: "network_direction",
+    key: 'network_direction',
     content: {
       network_direction: {
-        internal_networks: ["private"],
+        internal_networks: ['private'],
       },
     },
   },
   {
-    key: "pipeline",
+    key: 'pipeline',
     content: {
       pipeline: {
-        name: "custompipelinename",
+        name: 'custompipelinename',
       },
     },
   },
   {
-    key: "redact",
+    key: 'redact',
     content: {
       redact: {
-        field: "message",
-        patterns: ["%{IP:client}"],
+        field: 'message',
+        patterns: ['%{IP:client}'],
       },
     },
   },
   {
-    key: "registered_domain",
+    key: 'registered_domain',
     content: {
       registered_domain: {
-        field: "fqdn",
-        target_field: "url",
+        field: 'fqdn',
+        target_field: 'url',
       },
     },
   },
   {
-    key: "remove",
+    key: 'remove',
     content: {
       remove: {
-        field: ["field1", "field2"],
+        field: ['field1', 'field2'],
         if: "ctx.field1 == ''",
       },
     },
   },
   {
-    key: "rename",
+    key: 'rename',
     content: {
       rename: {
-        field: "message",
-        target_field: "newfield",
+        field: 'message',
+        target_field: 'newfield',
       },
     },
   },
   {
-    key: "script",
+    key: 'script',
     content: {
       script: {
-        lang: "painless",
-        source: "test",
+        lang: 'painless',
+        source: 'test',
       },
     },
   },
   {
-    key: "set",
+    key: 'set',
     content: {
       set: {
-        field: "field1",
-        value: "value1",
+        field: 'field1',
+        value: 'value1',
       },
     },
   },
   {
-    key: "sort",
+    key: 'sort',
     content: {
       sort: {
-        field: "field1",
-        order: "desc",
+        field: 'field1',
+        order: 'desc',
       },
     },
   },
   {
-    key: "split",
+    key: 'split',
     content: {
       split: {
-        field: "field1",
-        separator: "\\s+",
+        field: 'field1',
+        separator: '\\s+',
       },
     },
   },
   {
-    key: "trim",
+    key: 'trim',
     content: {
       trim: {
-        field: "field1",
+        field: 'field1',
       },
     },
   },
   {
-    key: "uppercase",
+    key: 'uppercase',
     content: {
       uppercase: {
-        field: "field1",
+        field: 'field1',
       },
     },
   },
   {
-    key: "urldecode",
+    key: 'urldecode',
     content: {
       urldecode: {
-        field: "field1",
+        field: 'field1',
       },
     },
   },
   {
-    key: "uri_parts",
+    key: 'uri_parts',
     content: {
       uri_parts: {
-        field: "someurl",
-        target_field: "url",
+        field: 'someurl',
+        target_field: 'url',
       },
     },
   },
   {
-    key: "user_agent",
+    key: 'user_agent',
     content: {
       user_agent: {
-        field: "someuser",
-        target_field: "user_agent",
+        field: 'someuser',
+        target_field: 'user_agent',
       },
     },
   },

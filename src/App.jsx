@@ -1,6 +1,6 @@
-import { EuiSpacer, EuiPage, EuiPageBody } from "@elastic/eui";
-import Header from "./components/header/Header";
-import MainPage from "./components/main/MainPage.jsx";
+import { EuiSpacer, EuiPage, EuiPageBody } from '@elastic/eui';
+import Header from './components/header/Header';
+import MainPage from './components/main/MainPage.jsx';
 
 function App() {
   return (

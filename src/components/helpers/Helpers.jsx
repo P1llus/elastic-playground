@@ -1,9 +1,9 @@
-import { htmlIdGenerator } from "@elastic/eui";
-import ECS_FIELDS from "./Ecs";
-import axios from "axios";
-import { getEncoding } from "js-tiktoken";
-import { useGlobalState } from "../hooks/GlobalState";
-import { OpenAIClient, AzureKeyCredential } from "@azure/openai";
+import { htmlIdGenerator } from '@elastic/eui';
+import ECS_FIELDS from './Ecs';
+import axios from 'axios';
+import { getEncoding } from 'js-tiktoken';
+import { useGlobalState } from '../hooks/GlobalState';
+import { OpenAIClient, AzureKeyCredential } from '@azure/openai';
 
 const esUser = import.meta.env.VITE_ES_USER;
 const esPass = import.meta.env.VITE_ES_PASS;
@@ -20,53 +20,53 @@ const examplePipeline = `{"processors":[{"json":{"field":"message","target_field
 
 const messages = [
   {
-    role: "system",
+    role: 'system',
     content:
       'You are an AI assistant that helps people create Elasticsearch Ingest Pipelines based on user provided data which is a JSON string that is stored in the "message" field. Please provide a single codeblock on a single line containing a Ingest Pipeline and nothing else. The content from the user should include the vendor and product, and one or more JSON strings for example data to be transformed with the ingest pipeline.\nWhen creating the Ingest Pipeline, follow these rules:\nFirst use the JSON processor to process the JSON string in the message field. The configured target_field for the JSON processor should be the vendor and product, for example mysql.audit or microsoft.defender.\nAfter that you should use the remove processor to remove the message field.\nAfter that you should use the rename processor, on any field that matches the Elastic Common Schema, to rename the field and path to match the ECS schema. For example mysql.audit.username should be moved to user.name. Only use one rename processor per field, as it does not allow arrays.\nNever try to rename two fields to the same ECS field if they are in the same log sample, as it will overwrite eachother. If the user provides multiple log samples, and each has different fields that would result in the same ECS destination field then that is fine.\nIf you find any field that indicates the timestamp the event happened, use a date processor to parse this field into @timestamp.',
   },
   {
-    role: "user",
+    role: 'user',
     content:
       'Vendor: MySQL Enterprise, Product: Audit\nTest Data: { "timestamp": "2020-10-19 19:31:47", "id": 0, "class": "general", "event": "status", "connection_id": 16, "account": { "user": "audit_test_user2", "host": "hades.home" }, "login": { "user": "audit_test_user2", "os": "", "ip": "192.168.2.5", "proxy": "" }, "general_data": { "command": "Query", "sql_command": "create_table", "query": "CREATE TABLE audit_test_table (firstname VARCHAR(20), lastname VARCHAR(20))", "status": 0 } }',
   },
   {
-    role: "assistant",
-    content: "```" + examplePipeline + "```",
+    role: 'assistant',
+    content: '```' + examplePipeline + '```',
   },
 ];
 
 const makeId = htmlIdGenerator();
 
 export const calculateTokenCount = (textArray) => {
-  let fullText = "";
+  let fullText = '';
 
   messages.forEach((message) => {
-    fullText += message.content + "\n";
+    fullText += message.content + '\n';
   });
 
   textArray.forEach((text) => {
-    fullText += "\n" + text;
+    fullText += '\n' + text;
   });
 
-  const enc = getEncoding("cl100k_base");
+  const enc = getEncoding('cl100k_base');
   const tokens = enc.encode(fullText);
   return tokens.length;
 };
 
 export const runPipeline = (ingestPipeline, messageArray) => {
   let verbose = false;
-  let url = "";
+  let url = '';
   if (ingestPipeline.length > 0) {
     verbose = true;
   }
   if (verbose) {
-    url = esHost + "/_ingest/pipeline/_simulate?verbose=true";
+    url = esHost + '/_ingest/pipeline/_simulate?verbose=true';
   } else {
-    url = esHost + "/_ingest/pipeline/_simulate";
+    url = esHost + '/_ingest/pipeline/_simulate';
   }
   const result = {
     pipeline: {
-      description: "",
+      description: '',
       processors: [],
     },
     docs: [],
@@ -74,7 +74,7 @@ export const runPipeline = (ingestPipeline, messageArray) => {
 
   ingestPipeline.forEach((processor) => {
     let processedContent;
-    if (typeof processor.content === "string") {
+    if (typeof processor.content === 'string') {
       try {
         processedContent = JSON.parse(processor.content);
       } catch (e) {
@@ -85,13 +85,13 @@ export const runPipeline = (ingestPipeline, messageArray) => {
       processedContent = JSON.parse(JSON.stringify(processor.content));
     }
     let rootField = Object.keys(processedContent)[0];
-    processedContent[rootField]["tag"] = processor.key;
+    processedContent[rootField]['tag'] = processor.key;
     result.pipeline.processors.push(processedContent);
   });
 
   messageArray.forEach((message, index) => {
     const doc = {
-      _index: "index",
+      _index: 'index',
       _id: `${index}`,
       _source: {
         message: message,
@@ -103,15 +103,15 @@ export const runPipeline = (ingestPipeline, messageArray) => {
   axios
     .post(url, result, {
       headers: {
-        "Content-Type": "application/json",
-        Authorization: "Basic " + btoa(esUser + ":" + esPass),
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + btoa(esUser + ':' + esPass),
       },
     })
     .then((response) => {
       handleRunResults(response.data, verbose);
     })
     .catch((error) => {
-      console.log("response err: ", error);
+      console.log('response err: ', error);
     });
 };
 
@@ -136,19 +136,18 @@ export const handleRunResults = (runResults, verbose) => {
       doc.processor_results.forEach((result, index) => {
         const { status, tag, doc: resultDoc } = result;
 
-        if (status === "success") {
+        if (status === 'success') {
           lastSuccessfulResult = resultDoc._source;
           if (!pipelineSteps[tag]) pipelineSteps[tag] = [];
           pipelineSteps[tag].push(resultDoc._source);
 
           successCount++;
           totalDuration += resultDoc._ingest.duration;
-        } else if (status === "skipped") {
+        } else if (status === 'skipped') {
           if (!pipelineSkippedSteps[tag]) pipelineSkippedSteps[tag] = [];
           const skippedResult = { ...result };
           if (doc.processor_results[index - 1]) {
-            skippedResult.skipped_doc =
-              doc.processor_results[index - 1].doc._source;
+            skippedResult.skipped_doc = doc.processor_results[index - 1].doc._source;
           }
           pipelineSkippedSteps[tag].push(skippedResult);
         } else {
@@ -161,8 +160,7 @@ export const handleRunResults = (runResults, verbose) => {
 
         const stats = {
           status: result.status,
-          duration:
-            result.status === "success" ? resultDoc._ingest.duration : 0,
+          duration: result.status === 'success' ? resultDoc._ingest.duration : 0,
         };
 
         if (!pipelineStats[tag]) pipelineStats[tag] = [];
@@ -189,11 +187,11 @@ export const extractFields = (obj, parent) => {
   for (let key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       let newKey = parent ? `${parent}.${key}` : key;
-      if (typeof obj[key] === "object" && obj[key] !== null) {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
         result = result.concat(extractFields(obj[key], newKey));
       } else {
         const isEcs = Object.prototype.hasOwnProperty.call(ECS_FIELDS, newKey);
-        const description = isEcs ? ECS_FIELDS[newKey] : "";
+        const description = isEcs ? ECS_FIELDS[newKey] : '';
         result.push({
           field: newKey,
           is_ecs: isEcs,
@@ -219,7 +217,7 @@ export const openAIRequest = async (vendor, product, textArray) => {
   const allMessages = [
     ...messages,
     {
-      role: "user",
+      role: 'user',
       content: fullText,
     },
   ];

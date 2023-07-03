@@ -1,10 +1,5 @@
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFieldText,
-  EuiFormRow,
-} from "@elastic/eui";
-import { useGlobalState } from "../hooks/GlobalState";
+import { EuiFlexGroup, EuiFlexItem, EuiFieldText, EuiFormRow } from '@elastic/eui';
+import { useGlobalState } from '../hooks/GlobalState';
 
 const Forms = () => {
   const vendor = useGlobalState((state) => state.vendor);
@@ -26,21 +21,17 @@ const Forms = () => {
             fullWidth
             placeholder="Okta"
             value={vendor}
-            onChange={(e) => handleFormStateChange("vendor", e.target.value)}
+            onChange={(e) => handleFormStateChange('vendor', e.target.value)}
           />
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem>
-        <EuiFormRow
-          fullWidth
-          label="Product"
-          helpText="Which product from the vendor? (e.g. ASA, Firewall, etc.)"
-        >
+        <EuiFormRow fullWidth label="Product" helpText="Which product from the vendor? (e.g. ASA, Firewall, etc.)">
           <EuiFieldText
             fullWidth
             placeholder="System"
             value={product}
-            onChange={(e) => handleFormStateChange("product", e.target.value)}
+            onChange={(e) => handleFormStateChange('product', e.target.value)}
           />
         </EuiFormRow>
       </EuiFlexItem>
@@ -54,9 +45,7 @@ const Forms = () => {
             fullWidth
             placeholder="audit log"
             value={description}
-            onChange={(e) =>
-              handleFormStateChange("description", e.target.value)
-            }
+            onChange={(e) => handleFormStateChange('description', e.target.value)}
           />
         </EuiFormRow>
       </EuiFlexItem>
