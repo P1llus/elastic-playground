@@ -9,6 +9,11 @@ export const tokenState = (set) => ({
   setTokenCount: (value) => set({ tokenCount: value }),
 });
 
+export const gptState = (set) => ({
+  isLoadingGPT: false,
+  setIsLoadingGPT: (value) => set({ isLoadingGPT: value }),
+});
+
 export const logSamplesState = (set) => ({
   samples: [""],
   increaseSample: () => set((state) => ({ samples: [...state.samples, ""] })),

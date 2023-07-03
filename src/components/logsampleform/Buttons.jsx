@@ -5,25 +5,21 @@ import {
   EuiButton,
   EuiButtonIcon,
   EuiSpacer,
-  htmlIdGenerator,
 } from "@elastic/eui";
 import { useGlobalState } from "../hooks/GlobalState";
 import { calculateTokenCount, openAIRequest } from "../helpers/Helpers";
 import { useEffect } from "react";
 
-const makeId = htmlIdGenerator();
-
 const Buttons = () => {
   const increaseSample = useGlobalState((state) => state.increaseSample);
   const decreaseSample = useGlobalState((state) => state.decreaseSample);
+  const isLoadingGPT = useGlobalState((state) => state.isLoadingGPT);
+  const setIsLoadingGPT = useGlobalState((state) => state.setIsLoadingGPT);
   const samples = useGlobalState((state) => state.samples);
   const vendor = useGlobalState((state) => state.vendor);
   const product = useGlobalState((state) => state.product);
   const tokenCount = useGlobalState((state) => state.tokenCount);
   const setTokenCount = useGlobalState((state) => state.setTokenCount);
-  const setIngestPipelineState = useGlobalState(
-    (state) => state.setIngestPipelineState
-  );
   const handleRemoveLogSample = () => {
     decreaseSample();
   };
@@ -33,7 +29,9 @@ const Buttons = () => {
 
   const runGPT = () => {
     (async () => {
+      setIsLoadingGPT(true);
       await openAIRequest(vendor, product, samples);
+      setIsLoadingGPT(false);
     })();
   };
 
@@ -60,6 +58,7 @@ const Buttons = () => {
           <EuiFlexItem>
             <EuiButton
               fill={true}
+              isLoading={isLoadingGPT}
               onClick={() => {
                 runGPT();
               }}

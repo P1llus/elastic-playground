@@ -12,6 +12,7 @@ const esHost = import.meta.env.VITE_ES_HOST;
 const aiEndpoint = import.meta.env.VITE_OPENAI_ENDPOINT;
 const aiKey = import.meta.env.VITE_OPENAI_APIKEY;
 const aiEngine = import.meta.env.VITE_OPENAI_ENGINE;
+const aiTokenLimit = import.meta.env.VITE_OPENAI_TOKEN_LIMIT;
 
 const globalState = useGlobalState.getState();
 
@@ -223,7 +224,7 @@ export const openAIRequest = async (vendor, product, textArray) => {
     },
   ];
   const result = await client.getChatCompletions(aiEngine, allMessages, {
-    maxTokens: 10000,
+    maxTokens: parseInt(aiTokenLimit),
   });
 
   const pipeline = extractPipeline(result?.choices[0]?.message?.content);

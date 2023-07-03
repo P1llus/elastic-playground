@@ -24,7 +24,7 @@ const Forms = () => {
         >
           <EuiFieldText
             fullWidth
-            placeholder="Cisco"
+            placeholder="Okta"
             value={vendor}
             onChange={(e) => handleFormStateChange("vendor", e.target.value)}
           />
@@ -38,7 +38,7 @@ const Forms = () => {
         >
           <EuiFieldText
             fullWidth
-            placeholder="ASA"
+            placeholder="System"
             value={product}
             onChange={(e) => handleFormStateChange("product", e.target.value)}
           />
