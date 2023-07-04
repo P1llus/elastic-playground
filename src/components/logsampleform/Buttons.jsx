@@ -29,15 +29,12 @@ const Buttons = () => {
 
   useEffect(() => {
     const setTokenCount = useGlobalState.getState().setTokenCount;
+
     if (samples?.length === 0) {
       return;
     }
-    const getTokenCount = setTimeout(() => {
-      const count = calculateTokenCount(samples);
-      setTokenCount(count);
-    }, 5000);
-
-    return () => clearTimeout(getTokenCount);
+    const count = calculateTokenCount(samples);
+    setTokenCount(count);
   }, [samples]);
 
   return (
@@ -48,6 +45,7 @@ const Buttons = () => {
             <EuiButton
               fill={true}
               isLoading={isLoadingGPT}
+              aria-label="Analyze with ChatGPT"
               onClick={() => {
                 runGPT();
               }}

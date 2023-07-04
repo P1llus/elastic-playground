@@ -221,6 +221,7 @@ export const openAIRequest = async (vendor, product, textArray) => {
       content: fullText,
     },
   ];
+  console.log('Sending API Request');
   const result = await client.getChatCompletions(aiEngine, allMessages, {
     maxTokens: parseInt(aiTokenLimit),
   });

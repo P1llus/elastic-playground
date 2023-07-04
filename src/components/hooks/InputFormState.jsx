@@ -29,4 +29,8 @@ export const logSamplesState = (set) => ({
     set((state) => ({
       samples: state.samples.map((s, i) => (i === index ? value : s)),
     })),
+  addSample: (value) =>
+    set((state) => ({
+      samples: [...state.samples, value],
+    })),
 });

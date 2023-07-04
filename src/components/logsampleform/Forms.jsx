@@ -20,6 +20,7 @@ const Forms = () => {
           <EuiFieldText
             fullWidth
             placeholder="Okta"
+            aria-label="vendor-input"
             value={vendor}
             onChange={(e) => handleFormStateChange('vendor', e.target.value)}
           />
@@ -30,6 +31,7 @@ const Forms = () => {
           <EuiFieldText
             fullWidth
             placeholder="System"
+            aria-label="product-input"
             value={product}
             onChange={(e) => handleFormStateChange('product', e.target.value)}
           />
@@ -44,6 +46,7 @@ const Forms = () => {
           <EuiFieldText
             fullWidth
             placeholder="audit log"
+            aria-label="description-input"
             value={description}
             onChange={(e) => handleFormStateChange('description', e.target.value)}
           />
