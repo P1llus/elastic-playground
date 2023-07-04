@@ -1,15 +1,16 @@
-import { vi } from 'vitest';
-import * as zustand from 'zustand';
+import { vi, afterEach } from 'vitest'
 import { act } from '@testing-library/react';
 
-const { create: actualCreate } = await vi.importActual<typeof zustand>('zustand');
+const { create: actualCreate } = await vi.importActual('zustand');
 
 // a variable to hold reset functions for all stores declared in the app
-export const storeResetFns = new Set<() => void>();
+export const storeResetFns = new Set();
 
 // when creating a store, we get its initial state, create a reset function and add it in the set
-export const create = (<T extends unknown>() => {
-  return (stateCreator: zustand.StateCreator<T>) => {
+export const create = () => {
+  console.log('zustand create mock');
+
+  return (stateCreator) => {
     const store = actualCreate(stateCreator);
     const initialState = store.getState();
     storeResetFns.add(() => {
@@ -17,7 +18,7 @@ export const create = (<T extends unknown>() => {
     });
     return store;
   };
-}) as typeof zustand.create;
+};
 
 // reset all stores after each test run
 afterEach(() => {
