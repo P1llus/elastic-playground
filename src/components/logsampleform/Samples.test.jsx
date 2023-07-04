@@ -7,6 +7,7 @@ import { runPipeline } from '../helpers/Helpers';
 describe('Samples Tests', () => {
   describe('Rendering', () => {
     beforeEach(() => {
+      useGlobalState.setState({ samples: [''], ingestPipeline: JSON.stringify('{"result": true, "count": 42}') });
       render(<Samples />);
     });
     it('Checking Log sample has 1 entry', async () => {
@@ -27,7 +28,6 @@ describe('Samples Tests', () => {
     beforeEach(() => {
       vi.resetAllMocks();
       vi.useFakeTimers();
-      useGlobalState.setState({ samples: [''], ingestPipeline: '{"result":true, "count":42}' });
       render(<Samples />);
     });
     it('Set value for first entry', async () => {

@@ -17,7 +17,6 @@ const Samples = () => {
     try {
       JSON.parse(clone);
     } catch (error) {
-      console.log(error);
       return;
     }
     const getData = setTimeout(() => {

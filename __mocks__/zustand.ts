@@ -1,5 +1,5 @@
-import * as zustand from 'zustand';
 import { vi } from 'vitest';
+import * as zustand from 'zustand';
 import { act } from '@testing-library/react';
 
 const { create: actualCreate } = await vi.importActual<typeof zustand>('zustand');
@@ -9,8 +9,6 @@ export const storeResetFns = new Set<() => void>();
 
 // when creating a store, we get its initial state, create a reset function and add it in the set
 export const create = (<T extends unknown>() => {
-  console.log('zustand create mock');
-
   return (stateCreator: zustand.StateCreator<T>) => {
     const store = actualCreate(stateCreator);
     const initialState = store.getState();

@@ -1,5 +1,3 @@
-/// <reference types="vitest" />
-/// <reference types="vite/client" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import eslintPlugin from 'vite-plugin-eslint';
@@ -10,14 +8,9 @@ export default defineConfig({
     eslintPlugin({
       cache: false,
       include: ['./src/**/*.js', './src/**/*.jsx'],
-      exclude: ['./src/test/test-utils.jsx'],
+      exclude: ['./.github/**/*.yml', './src/test/test-utils.jsx'],
     }),
   ],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './setup-vitest.ts',
-  },
   server: {
     watch: {
       usePolling: true,
