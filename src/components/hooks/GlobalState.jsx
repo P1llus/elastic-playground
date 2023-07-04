@@ -10,7 +10,7 @@ import {
   pipelineStatsTotal,
 } from './IngestPipelineState';
 
-export const useGlobalState = create((...a) => ({
+export const useGlobalState = create()((...a) => ({
   ...formState(...a),
   ...logSamplesState(...a),
   ...tokenState(...a),
