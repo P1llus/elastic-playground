@@ -2,10 +2,14 @@ name: GitHub Actions
 run-name: Upload Codecov 🚀
 on: [push]
 jobs:
-  Upload-coverage:
+  Coverage:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: yarn install
+      - run: yarn coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v3.1.0
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
