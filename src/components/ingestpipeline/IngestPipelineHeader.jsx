@@ -8,19 +8,23 @@ const IngestPipelineHeader = () => {
   return (
     <EuiFlexGroup>
       <EuiFlexItem grow={false}>
-        <EuiText>Success:</EuiText>
+        <EuiText aria-label="success-text">Success:</EuiText>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiBadge color="success">{successCount}</EuiBadge>
+        <EuiBadge aria-label="success-badge" color="success">
+          {successCount}
+        </EuiBadge>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiText>Errors:</EuiText>
+        <EuiText aria-label="errors-text">Errors:</EuiText>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiBadge color="danger">{errorCount}</EuiBadge>
+        <EuiBadge aria-label="errors-badge" color="danger">
+          {errorCount}
+        </EuiBadge>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiText>Duration: {totalDuration} (ns)</EuiText>
+        <EuiText aria-label="duration-text">Duration: {totalDuration} (ns)</EuiText>
       </EuiFlexItem>
     </EuiFlexGroup>
   );

@@ -31,6 +31,7 @@ const ComboBox = () => {
         <EuiComboBox
           fullWidth={true}
           placeholder="Select a processor"
+          aria-label="processor-combobox"
           singleSelection={{ asPlainText: true }}
           options={processors.map((processor) => ({
             label: processor.key,

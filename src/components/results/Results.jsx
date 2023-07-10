@@ -21,7 +21,7 @@ const Results = () => {
   }
 
   return (
-    <EuiFlexItem grow={1}>
+    <EuiFlexItem grow={2}>
       <div style={{ maxWidth: 5000 }}>
         {pipelineRunResults.map((result, index) => (
           <EuiFlexItem key={index}>
@@ -32,7 +32,7 @@ const Results = () => {
                   : `Output Results - Document: ${index + 1}`}
               </h2>
               <EuiSpacer size="m" />
-              <EuiCodeBlock language="json" isCopyable>
+              <EuiCodeBlock language="json" isCopyable className="eui-textBreakWord">
                 {JSON.stringify(result || {}, null, 2)}
               </EuiCodeBlock>
             </EuiPanel>

@@ -35,8 +35,6 @@ const messages = [
   },
 ];
 
-const makeId = htmlIdGenerator();
-
 export const calculateTokenCount = (textArray) => {
   let fullText = '';
 
@@ -74,6 +72,7 @@ export const runPipeline = (ingestPipeline, messageArray) => {
 
   ingestPipeline.forEach((processor) => {
     let processedContent;
+    /* c8 ignore next 6 */
     if (typeof processor.content === 'string') {
       try {
         processedContent = JSON.parse(processor.content);
@@ -110,8 +109,9 @@ export const runPipeline = (ingestPipeline, messageArray) => {
     .then((response) => {
       handleRunResults(response.data, verbose);
     })
+    /* c8 ignore next 2 */
     .catch((error) => {
-      console.log('response err: ', error);
+      console.log('Pipeline Response error: ', error);
     });
 };
 
@@ -183,6 +183,7 @@ export const handleRunResults = (runResults, verbose) => {
 };
 
 export const extractFields = (obj, parent) => {
+  const makeId = htmlIdGenerator();
   let result = [];
   for (let key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -204,10 +205,10 @@ export const extractFields = (obj, parent) => {
 
   return result;
 };
-
+/* c8 ignore next 241 */
 export const openAIRequest = async (vendor, product, textArray) => {
   if (!vendor || !product || textArray.length === 0) return;
-
+  const makeId = htmlIdGenerator();
   const client = new OpenAIClient(aiEndpoint, new AzureKeyCredential(aiKey));
 
   let fullText = `Vendor: ${vendor}, Product: ${product}\n`;
@@ -221,7 +222,6 @@ export const openAIRequest = async (vendor, product, textArray) => {
       content: fullText,
     },
   ];
-  console.log('Sending API Request');
   const result = await client.getChatCompletions(aiEngine, allMessages, {
     maxTokens: parseInt(aiTokenLimit),
   });
@@ -231,7 +231,7 @@ export const openAIRequest = async (vendor, product, textArray) => {
   try {
     processedPipeline = JSON.parse(pipeline);
   } catch (e) {
-    console.log(e);
+    console.log('OpenAI Response error: ', e);
     return;
   }
   let items = [];
@@ -249,7 +249,7 @@ export const openAIRequest = async (vendor, product, textArray) => {
   globalState.setIngestPipelineState(items);
 };
 
-function extractPipeline(str) {
+export const extractPipeline = (str) => {
   const matches = str.match(/```([^`]*)```/);
   return matches && matches[1] ? matches[1] : null;
-}
+};

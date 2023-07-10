@@ -22,6 +22,7 @@ beforeEach(() => {
     ingestPipeline: JSON.stringify('{"result": true, "count": 42}'),
   });
   vi.resetAllMocks();
+  render(<Samples />);
 });
 
 afterAll(() => {
@@ -30,9 +31,6 @@ afterAll(() => {
 
 describe('Samples Tests', () => {
   describe('Rendering', () => {
-    beforeEach(() => {
-      render(<Samples />);
-    });
     it('Checking Log sample has 1 entry', async () => {
       expect(screen.getByText(/Log Sample 1/i)).toBeDefined();
     });
@@ -42,10 +40,6 @@ describe('Samples Tests', () => {
   });
 
   describe('Test user input', () => {
-    beforeEach(() => {
-      render(<Samples />);
-    });
-
     it('Set value for first entry', async () => {
       vi.runAllTimers();
       expect(runPipeline).toHaveBeenCalled();
@@ -56,7 +50,6 @@ describe('Samples Tests', () => {
       vi.runAllTimers();
       expect(runPipeline).toHaveBeenCalledTimes(2);
     });
-
     it('Add a second Log Field and set value', async () => {
       vi.runAllTimers();
 
@@ -75,22 +68,16 @@ describe('Samples Tests', () => {
   describe('Test UseEffect', () => {
     beforeEach(() => {
       useGlobalState.setState({ samples: [] });
-      render(<Samples />);
     });
 
     it('Set value to nothing', async () => {
-      let logSamples;
       vi.runAllTimers();
       expect(runPipeline).toHaveBeenCalledTimes(0);
-      logSamples = useGlobalState.getState().samples;
-      expect(logSamples).toHaveLength(0);
-
-      await useGlobalState.setState({ samples: ['test3'] });
+      expect(useGlobalState.getState().samples).toHaveLength(0);
+      useGlobalState.setState({ samples: ['test3'] });
       const input = screen.getByLabelText('log-1');
       expect(input.value).toBe('test3');
-
-      logSamples = useGlobalState.getState().samples;
-      expect(logSamples).toHaveLength(1);
+      expect(useGlobalState.getState().samples).toHaveLength(1);
       vi.runAllTimers();
       expect(runPipeline).toHaveBeenCalledTimes(1);
     });

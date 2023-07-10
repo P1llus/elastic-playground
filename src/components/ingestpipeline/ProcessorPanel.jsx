@@ -10,9 +10,9 @@ const ProcessorPanel = ({ name, tag, idx }) => {
   const remove = (index) => {
     removePipelineItem(index);
   };
-
   return (
     <EuiPanel
+      aria-label="processor-panel"
       color={
         pipelineStats?.[tag]?.every((obj) => obj.status !== 'error')
           ? 'success'
@@ -30,7 +30,7 @@ const ProcessorPanel = ({ name, tag, idx }) => {
         <ProcessorBadge tag={tag} type="error" idx={idx} />
         <ProcessorBadge tag={tag} type="skipped" idx={idx} />
         <ProcessorBadge tag={tag} type="success" idx={idx} />
-        <EuiButtonIcon iconType="cross" aria-label="Remove" onClick={() => remove(idx)} />
+        <EuiButtonIcon iconType="cross" aria-label={`remove-${idx}`} onClick={() => remove(idx)} />
       </EuiFlexGroup>
     </EuiPanel>
   );

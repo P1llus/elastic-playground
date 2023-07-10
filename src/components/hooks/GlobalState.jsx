@@ -8,6 +8,8 @@ import {
   pipelineSteps,
   pipelineSkippedSteps,
   pipelineStatsTotal,
+  pipelineCopy,
+  pipelineBadgePopover,
 } from './IngestPipelineState';
 
 export const useGlobalState = create()((...a) => ({
@@ -21,5 +23,7 @@ export const useGlobalState = create()((...a) => ({
   ...pipelineSkippedSteps(...a),
   ...pipelineStatsTotal(...a),
   ...pipelineState(...a),
+  ...pipelineCopy(...a),
+  ...pipelineBadgePopover(...a),
   ...gptState(...a),
 }));

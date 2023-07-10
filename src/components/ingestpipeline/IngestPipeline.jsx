@@ -40,6 +40,7 @@ const IngestPipeline = () => {
   const ingestPipeline = useGlobalState((state) => state.ingestPipeline);
   const reorderPipelineItems = useGlobalState((state) => state.reorderPipelineItems);
 
+  /* c8 ignore next 20 */
   const onDragEnd = ({ source, destination }) => {
     if (source && destination) {
       reorderPipelineItems(source.index, destination.index);

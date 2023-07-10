@@ -1,4 +1,4 @@
-import { vi, afterEach } from 'vitest'
+import { vi, afterEach } from 'vitest';
 import { act } from '@testing-library/react';
 
 const { create: actualCreate } = await vi.importActual('zustand');
@@ -8,8 +8,6 @@ export const storeResetFns = new Set();
 
 // when creating a store, we get its initial state, create a reset function and add it in the set
 export const create = () => {
-  console.log('zustand create mock');
-
   return (stateCreator) => {
     const store = actualCreate(stateCreator);
     const initialState = store.getState();

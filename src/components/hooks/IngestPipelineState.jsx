@@ -37,6 +37,33 @@ export const pipelineRunResults = (set) => ({
   setPipelineRunResults: (results) => set({ pipelineRunResults: results }),
 });
 
+export const pipelineCopy = (set) => ({
+  copyPipeline: null,
+  isTextCopied: false,
+  setCopyPipeline: (pipeline) => set({ copyPipeline: pipeline }),
+  setIsTextCopied: (state) => set({ isTextCopied: state }),
+});
+
+export const pipelineBadgePopover = (set) => ({
+  isBadgePopoverOpen: {},
+
+  toggleBadgePopover: (identifier) =>
+    set((state) => ({
+      isBadgePopoverOpen: {
+        ...state.isBadgePopoverOpen,
+        [identifier]: !state.isBadgePopoverOpen[identifier],
+      },
+    })),
+
+  closeBadgePopover: (identifier) =>
+    set((state) => ({
+      isBadgePopoverOpen: {
+        ...state.isBadgePopoverOpen,
+        [identifier]: false,
+      },
+    })),
+});
+
 export const pipelineStats = (set) => ({
   pipelineStats: {},
   setPipelineStats: (newStats) => set({ pipelineStats: newStats }),

@@ -96,7 +96,7 @@ const EcsTable = () => {
     },
   ];
   return (
-    <EuiFlexItem grow={1}>
+    <EuiFlexItem grow={2}>
       <EuiPanel>
         <EuiBasicTable tableLayout="auto" items={ecsFields || []} columns={columns} />
       </EuiPanel>

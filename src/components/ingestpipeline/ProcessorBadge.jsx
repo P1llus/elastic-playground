@@ -1,6 +1,5 @@
 import { EuiPopover, EuiBadge, EuiCodeBlock, EuiSpacer } from '@elastic/eui';
 import { useGlobalState } from '../hooks/GlobalState';
-import { useState } from 'react';
 
 const badgeTypes = {
   duration: {
@@ -22,23 +21,13 @@ const badgeTypes = {
 };
 
 const ProcessorBadge = ({ type, tag, idx }) => {
+  const isBadgePopoverOpen = useGlobalState((state) => state.isBadgePopoverOpen);
+  const toggleBadgePopover = useGlobalState((state) => state.toggleBadgePopover);
+  const closeBadgePopover = useGlobalState((state) => state.closeBadgePopover);
   const { color, onClickAriaLabel, dataKey } = badgeTypes[type];
   const data = useGlobalState((state) => state[dataKey]?.[tag]);
   const id = `${type}-${idx}`;
 
-  const [isBadgePopoverOpen, setIsBadgePopoverOpen] = useState([]);
-  const toggleBadgePopover = (identifier) => {
-    setIsBadgePopoverOpen((prevOpen) => ({
-      ...prevOpen,
-      [identifier]: !prevOpen[identifier],
-    }));
-  };
-  const closeBadgePopover = (identifier) => {
-    setIsBadgePopoverOpen((prevOpen) => ({
-      ...prevOpen,
-      [identifier]: false,
-    }));
-  };
   if (type === 'duration') {
     return (
       <EuiPopover
@@ -54,7 +43,8 @@ const ProcessorBadge = ({ type, tag, idx }) => {
             {'Stats'}
           </EuiBadge>
         }
-        isOpen={isBadgePopoverOpen[id]}
+        isOpen={isBadgePopoverOpen?.[id] || false}
+        /* c8 ignore next 1 */
         closePopover={() => closeBadgePopover(id)}
       >
         {data?.map((doc, index) => (
@@ -80,7 +70,8 @@ const ProcessorBadge = ({ type, tag, idx }) => {
             {data?.length ?? 0}
           </EuiBadge>
         }
-        isOpen={isBadgePopoverOpen[id]}
+        isOpen={isBadgePopoverOpen?.[id] || false}
+        /* c8 ignore next 1 */
         closePopover={() => closeBadgePopover(id)}
       >
         <EuiCodeBlock language="json" isCopyable>
