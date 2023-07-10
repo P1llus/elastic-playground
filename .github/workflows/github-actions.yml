@@ -7,8 +7,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - run: yarn install
-      - run: yarn coverage
+      - name: Rename Environment File
+        run: mv .env.example .env
+      - name: Yarn Install
+        run: yarn install
+      - name: Yarn Coverage
+        run: yarn coverage
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3.1.0
         env:
