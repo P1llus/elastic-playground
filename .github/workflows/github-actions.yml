@@ -1,6 +1,9 @@
 name: GitHub Actions
 run-name: Upload Codecov 🚀
-on: [push]
+on:
+  push:
+    branches:
+      - 'main'
 jobs:
   Coverage:
     runs-on: ubuntu-latest
