@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { formState, logSamplesState, tokenState, gptState } from './InputFormState';
+import { ecsTablePopoverState, ecsTableFields } from './EcsTableState';
 import {
   pipelineErrors,
   pipelineState,
@@ -26,4 +27,6 @@ export const useGlobalState = create()((...a) => ({
   ...pipelineCopy(...a),
   ...pipelineBadgePopover(...a),
   ...gptState(...a),
+  ...ecsTablePopoverState(...a),
+  ...ecsTableFields(...a),
 }));

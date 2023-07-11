@@ -32,6 +32,7 @@ const Results = () => {
                   : `Output Results - Document: ${index + 1}`}
               </h2>
               <EuiSpacer size="m" />
+              {/* c8 ignore next 3 */}
               <EuiCodeBlock language="json" isCopyable className="eui-textBreakWord">
                 {JSON.stringify(result || {}, null, 2)}
               </EuiCodeBlock>

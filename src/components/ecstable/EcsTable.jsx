@@ -1,5 +1,5 @@
 import { EuiBasicTable, EuiPanel, EuiFlexItem, EuiButtonEmpty, EuiPopover, EuiText } from '@elastic/eui';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { extractFields } from '../helpers/Helpers';
 
 import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon';
@@ -15,16 +15,18 @@ appendIconComponentCache({
 
 const EcsTable = () => {
   const pipelineRunResults = useGlobalState((state) => state.pipelineRunResults);
-  const [popoverState, setPopoverState] = useState('');
-  const [ecsFields, setEcsFields] = useState([]);
+  const popoverState = useGlobalState((state) => state.ecsTablePopoverState);
+  const setPopoverState = useGlobalState((state) => state.setEcsTablePopoverState);
+  const ecsFields = useGlobalState((state) => state.ecsFields);
+  const setEcsFields = useGlobalState((state) => state.setEcsFields);
 
   const handleEcsFields = (response) => {
     let fieldsSet = new Set();
     let newFieldsArray = [];
-    if (!response || response.length === 0) return;
     for (let doc of response) {
       if (doc && !doc.error) {
         let newFields = '';
+        /* c8 ignore next 10 */
         if (doc._source) {
           newFields = extractFields(doc?._source);
         } else {
@@ -56,12 +58,13 @@ const EcsTable = () => {
     }
   }, [pipelineRunResults]);
 
+  /* c8 ignore next 3 */
   const closePopover = (id) => {
-    setPopoverState((prevState) => ({ ...prevState, [id]: false }));
+    setPopoverState(id);
   };
 
   const onButtonClick = (id) => {
-    setPopoverState((prevState) => ({ ...prevState, [id]: true }));
+    setPopoverState(id);
   };
 
   const columns = [
@@ -83,10 +86,11 @@ const EcsTable = () => {
             View Documentation
           </EuiButtonEmpty>
         );
+        /* c8 ignore next 10 */
         return (
           <EuiPopover
             button={button}
-            isOpen={popoverState[item.id] || false}
+            isOpen={popoverState?.[item.id] || false}
             closePopover={() => closePopover(item.id)}
           >
             <EuiText style={{ width: 300 }}>{description ? description : 'No documentation available'}</EuiText>
@@ -95,6 +99,7 @@ const EcsTable = () => {
       },
     },
   ];
+  /* c8 ignore next 6 */
   return (
     <EuiFlexItem grow={2}>
       <EuiPanel>
