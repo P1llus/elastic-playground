@@ -5,6 +5,8 @@ orbs:
 
 jobs:
   build-and-test:
+    environment:
+      VITE_ES_HOST: http://localhost:9200
     docker:
       - image: cimg/node:16.10
     steps:
