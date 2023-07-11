@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/P1llus/elastic-playground/branch/main/graph/badge.svg?token=76G6J0OU9W)](https://codecov.io/gh/P1llus/elastic-playground)
+
 ## Elastic Playground
 
 Currently an in-progress app that will include multiple tools and snippets, first tool currently being created is the Ingest Pipeline Builder.
