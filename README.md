@@ -1,5 +1,5 @@
 [![Codecov](https://codecov.io/gh/P1llus/elastic-playground/branch/main/graph/badge.svg?token=76G6J0OU9W)](https://codecov.io/gh/P1llus/elastic-playground)
-![Github Actions](https://github.com/github/docs/actions/workflows/github-actions.yml/badge.svg)
+![Github Actions](https://github.com/github/docs/actions/workflows/github%2Factions.yml/badge.svg)
 
 ## Elastic Playground
 
